@@ -4,7 +4,6 @@ import domain.model.Event
 import domain.model.Schedule
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(
@@ -18,7 +17,7 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun fetchSchedules(): ArrayList<Schedule>? =
         withContext(ioDispatcher) {
-            apiService.getSchedules().body()
+            apiService.getSchedule().body()
         }
 }
 

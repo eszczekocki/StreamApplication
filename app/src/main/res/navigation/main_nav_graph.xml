@@ -8,11 +8,11 @@
     <fragment
         android:id="@+id/eventsFragment"
         android:name="app.ui.events.EventsFragment"
-        android:label="fragment_events"
+        android:label="@string/event_label"
         tools:layout="@layout/fragment_events" />
     <fragment
         android:id="@+id/scheduleFragment"
         android:name="app.ui.schedule.ScheduleFragment"
-        android:label="fragment_schedule"
+        android:label="@string/schedule_label"
         tools:layout="@layout/fragment_schedule" />
 </navigation>

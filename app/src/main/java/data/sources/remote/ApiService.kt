@@ -10,6 +10,6 @@ interface ApiService
 @GET("getEvents")
 suspend fun getEvents() : Response<ArrayList<Event>>
 
-@GET("getSchedules")
-suspend fun getSchedules() : Response<ArrayList<Schedule>>
+@GET("getSchedule")
+suspend fun getSchedule() : Response<ArrayList<Schedule>>
 }

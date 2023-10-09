@@ -2,4 +2,6 @@
     <string name="app_name">StreamingApp</string>
     <string name="menu_events">Events</string>
     <string name="menu_schedules">Schedule</string>
+    <string name="event_label">Events</string>
+    <string name="schedule_label">Schedule</string>
 </resources>
