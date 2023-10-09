@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(var repository: SchedulesRepository): ViewModel() {
+    var sec_30: Long = 30000
     var repositoryResultLiveData: MutableLiveData<Resource<List<Schedule>>> = MutableLiveData()
     lateinit var adapter: ScheduleAdapter
 
@@ -21,7 +22,7 @@ class ScheduleViewModel @Inject constructor(var repository: SchedulesRepository)
         repositoryResultLiveData.postValue(Resource.loading())
     }
 
-    var job = viewModelScope.launchPeriodicAsync(0) {
+    var job = viewModelScope.launchPeriodicAsync(sec_30) {
         refreshSchedule()
     }
 
