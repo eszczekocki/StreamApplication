@@ -14,23 +14,33 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 
-class VideoDialog() : DialogFragment() {
+class VideoDialog : DialogFragment() {
     private var lastOrientation: Int? = null
-    private var fullScreenDialog: Dialog?=null
+    private var fullScreenDialog: Dialog? = null
     private lateinit var player: ExoPlayer
-    private var videoUri: String? =null
+    private var videoUri: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         videoUri = arguments?.getString("uri")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        player.release()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var view = inflater.inflate(com.example.streamingapp.R.layout.fragment_video_dialog, container, false)
-        var contentView = view?.findViewById<FrameLayout>(com.example.streamingapp.R.id.enclosingLayout);
+        var view = inflater.inflate(
+            com.example.streamingapp.R.layout.fragment_video_dialog,
+            container,
+            false
+        )
+        var contentView =
+            view?.findViewById<FrameLayout>(com.example.streamingapp.R.id.enclosingLayout)
         var playerView = view?.findViewById<PlayerView>(com.example.streamingapp.R.id.mediaPlayer)
         player = ExoPlayer.Builder(requireContext()).build()
         playerView?.player = player

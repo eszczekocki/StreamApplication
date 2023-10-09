@@ -1,33 +1,44 @@
 package app.ui.schedule
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.OneTimeWorkRequest
-import app.ui.utils.CoroutinesExtendedFunctions.launchPeriodicAsync
+import app.utils.CoroutinesExtendedFunctions.launchPeriodicAsync
+import app.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import data.repository.SchedulesRepository
 import domain.model.Schedule
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import domain.repository.SchedulesRepository
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(var repository: SchedulesRepository): ViewModel() {
-    var scheduleLiveData: MutableLiveData<List<Schedule>> = MutableLiveData()
-    var job = viewModelScope.launchPeriodicAsync(30000){
+    var repositoryResultLiveData: MutableLiveData<Resource<List<Schedule>>> = MutableLiveData()
+    lateinit var adapter: ScheduleAdapter
+
+    init {
+        repositoryResultLiveData.postValue(Resource.loading())
+    }
+
+    var job = viewModelScope.launchPeriodicAsync(0) {
         refreshSchedule()
     }
 
     fun refreshSchedule() {
         viewModelScope.launch {
-            repository.getAll()?.let {
-                scheduleLiveData.postValue(it.sortedByDescending { x->x.date })
-                Log.d("srefreshSchedule","schedule refreshed")
+            try {
+                repository.getAll()?.let {
+                    repositoryResultLiveData.postValue(Resource.success(it.sortedBy { x ->
+                        x.date
+                    }.filter { x ->
+                        LocalDate.now().plusDays(1)
+                            .compareTo(x.date.toLocalDate()) == 0
+                    }))
+                }
+            } catch (e: Exception) {
+                repositoryResultLiveData.postValue(Resource.error(message = e.message))
             }
         }
     }
-
-    lateinit var  adapter : ScheduleAdapter
 }

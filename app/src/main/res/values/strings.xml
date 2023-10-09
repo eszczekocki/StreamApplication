@@ -4,4 +4,8 @@
     <string name="menu_schedules">Schedule</string>
     <string name="event_label">Events</string>
     <string name="schedule_label">Schedule</string>
+    <string name="network_problem">Connection problem</string>
+    <string name="today">today</string>
+    <string name="tomorrow">tomorrow</string>
+    <string name="yesterday">yesterday</string>
 </resources>

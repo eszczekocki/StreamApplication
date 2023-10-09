@@ -43,6 +43,7 @@ kapt {
     correctErrorTypes true
 }
 
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -61,19 +62,29 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'androidx.databinding:databinding-runtime:7.4.2'
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
 
     implementation "androidx.media3:media3-exoplayer:1.1.1"
     implementation "androidx.media3:media3-exoplayer-dash:1.1.1"
     implementation "androidx.media3:media3-ui:1.1.1"
     implementation 'androidx.work:work-runtime-ktx:2.8.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
     annotationProcessor "androidx.room:room-compiler:2.5.2"
 
     // To use Kotlin annotation processing tool (kapt)
     kapt "androidx.room:room-compiler:2.5.2"
 
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
 
     kapt "com.google.dagger:hilt-compiler:2.44"
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    testImplementation "org.mockito:mockito-core:5.6.0"
+    androidTestImplementation "org.mockito:mockito-android:5.6.0"
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
+
+
 }

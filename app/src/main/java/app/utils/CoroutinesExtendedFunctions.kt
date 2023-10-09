@@ -1,4 +1,4 @@
-package app.ui.utils
+package app.utils
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async

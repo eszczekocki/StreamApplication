@@ -15,7 +15,7 @@ class RemoteDataSource @Inject constructor(
             apiService.getEvents().body()
         }
 
-    suspend fun fetchSchedules(): ArrayList<Schedule>? =
+    suspend fun fetchSchedule(): ArrayList<Schedule>? =
         withContext(ioDispatcher) {
             apiService.getSchedule().body()
         }

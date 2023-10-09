@@ -1,11 +1,12 @@
 package app.ui.events
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.ui.addons.videodialog.VideoDialog
+import app.utils.Status
 import com.example.streamingapp.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,25 +40,44 @@ class EventsFragment : Fragment(), EventsAdapter.OnItemClickListener {
         super.onActivityCreated(savedInstanceState)
 
         recyclerView = view?.findViewById<RecyclerView>(R.id.eventRecyclerView)!!
-        viewModel.adapter = EventsAdapter(R.layout.event_item,viewModel.eventsLiveData.value ?: emptyList()
-        , this)
+        viewModel.adapter = EventsAdapter(this)
 
-        recyclerView?.let {
+        recyclerView.let {
             it.layoutManager = LinearLayoutManager(activity)
             it.adapter = viewModel.adapter
         }
-        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context,RecyclerView.VERTICAL))
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                recyclerView.context,
+                RecyclerView.VERTICAL
+            )
+        )
 
-        viewModel.eventsLiveData.observe(viewLifecycleOwner, Observer {
-            viewModel.adapter?.updateData(it)
-        })
-
-        var swipeLayout = view?.findViewById<SwipeRefreshLayout>(R.id.eventSwipeRefreshLayout)
+        val swipeLayout = view?.findViewById<SwipeRefreshLayout>(R.id.eventSwipeRefreshLayout)
         swipeLayout?.setOnRefreshListener {
             viewModel.refreshEvents()
-            swipeLayout?.isRefreshing = false
+            swipeLayout.isRefreshing = false
         }
-        viewModel.refreshEvents()
+
+        viewModel.repositoryResultLiveData.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    swipeLayout?.isRefreshing = false
+                    viewModel.adapter.updateData(it.data ?: emptyList())
+                }
+                Status.FAILURE -> {
+                    swipeLayout?.isRefreshing = false
+                    Toast.makeText(
+                        context,
+                        "${context?.getText(R.string.network_problem)} ${it.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                Status.LOADING -> {
+                    swipeLayout?.isRefreshing = true
+                }
+            }
+        })
     }
 
     override fun onItemClick(uri: String) {

@@ -1,15 +1,18 @@
 package app.ui.schedule
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import app.utils.Status
 import com.example.streamingapp.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,21 +41,45 @@ class ScheduleFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         recyclerView = view?.findViewById<RecyclerView>(R.id.scheduleRecyclerView)!!
-        viewModel.adapter = ScheduleAdapter(R.layout.event_item,viewModel.scheduleLiveData.value ?: emptyList())
+        viewModel.adapter = ScheduleAdapter()
 
-        recyclerView?.let {
+        recyclerView.let {
             it.layoutManager = LinearLayoutManager(activity)
             it.adapter = viewModel.adapter
         }
         recyclerView.addItemDecoration(
-            DividerItemDecoration(recyclerView.context,
-                RecyclerView.VERTICAL)
+            DividerItemDecoration(
+                recyclerView.context,
+                RecyclerView.VERTICAL
+            )
         )
+        recyclerView.itemAnimator?.changeDuration = 0
+        var swipeLayout = view?.findViewById<SwipeRefreshLayout>(R.id.scheduleSwipeRefreshLayout)
+        swipeLayout?.setOnRefreshListener {
+            viewModel.refreshSchedule()
+            swipeLayout.isRefreshing = false
+        }
 
-        viewModel.scheduleLiveData.observe(viewLifecycleOwner, Observer {
-            viewModel.adapter.updateData(it)
+        viewModel.repositoryResultLiveData.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    swipeLayout?.isRefreshing = false
+                    viewModel.adapter.updateData(it.data ?: emptyList())
+                }
+                Status.FAILURE -> {
+                    swipeLayout?.isRefreshing = false
+                    Toast.makeText(
+                        context,
+                        "${context?.getText(R.string.network_problem)} ${it.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                Status.LOADING -> {
+                    swipeLayout?.isRefreshing = true
+                }
+            }
         })
 
-    }
 
+    }
 }
